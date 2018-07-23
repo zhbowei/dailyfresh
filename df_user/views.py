@@ -60,17 +60,20 @@ def login_headle(req):
         else:
             context = {'title': '用户登录', 'error_name':0, 'error_pwd':1, 'uname': uname,'upwd':upwd}
             return render(req,'df_user/login.html',context)
-    context = {'title': '用户登录', 'error_name':1, 'error_pwd':0, 'uname': uname,'upwd':upwd}
+    context = {'title': '用户登录','error_name':1, 'error_pwd':0, 'uname': uname,'upwd':upwd}
     return render(req,'df_user/login.html',context)
 def info(req):
     user_email = UserInfo.objects.get(id=req.session['user_id']).uemail
     centext = {'title':'用户中心',
+               'page_name': 1,
                'user_email':user_email,
                'user_name':req.session['user_name']
                }
     return render(req,'df_user/user_center_info.html',centext)
 def order(req):
-    centext = {'title':"用户中心"}
+    centext = {'title':"用户中心",
+               'page_name': 1,
+               }
     return render(req,'df_user/user_center_order.html',centext)
 def site(req):
     user = UserInfo.objects.get(id=req.session['user_id'])
@@ -81,7 +84,8 @@ def site(req):
         user.uphone = req.POST.get('uphone')
         user.save()
     centext = {'title':'用户中心',
-                'user':user,
+               'page_name': 1,
+               'user':user,
     }
     return render(req,'df_user/user_center_site.html',centext)
 
