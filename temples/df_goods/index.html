@@ -1,6 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'df_user/base.html' %}
     {% block head %}
-	<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="/static/js/slide.js"></script>
     {% endblock head %}
@@ -119,6 +118,7 @@
                     <h4><a href="/{{ f.id }}/">{{ f.gtitle|slice:'10'}}...</a></h4>
                     <a href="/{{ f.id }}/"><img src="/static/{{ f.gpic }}"></a>
                     <div class="prize">¥ {{ f.gprice }}</div>
+
                     </li>
                 {% endfor %}
 			</ul>

@@ -1,7 +1,10 @@
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render,redirect
+
+from df_goods.models import GoodsInfo
 from .models import *
 from hashlib import sha1
+from df_user import user_decorator
 # Create your views here.
 
 def register(req):
@@ -49,7 +52,8 @@ def login_headle(req):
         jupwd = s1.hexdigest()
         #如果密码正确，则转到用户中心
         if jupwd == users[0].upwd:
-            red = HttpResponseRedirect('/user/info/')
+            url = req.COOKIES.get('url','/')
+            red = HttpResponseRedirect(url)
             if jizhu != 0:
                 red.set_cookie('uname',uname)
             else:
@@ -62,19 +66,35 @@ def login_headle(req):
             return render(req,'df_user/login.html',context)
     context = {'title': '用户登录','error_name':1, 'error_pwd':0, 'uname': uname,'upwd':upwd}
     return render(req,'df_user/login.html',context)
+def logout(req):
+    # req.session.flush() # 全清除
+    del req.session['user_id']
+    del req.session['user_name']
+    return redirect('/')
+@user_decorator.login
 def info(req):
+    #最近浏览
+    goods_ids = req.COOKIES.get('goods_ids','')
+    goods_ids1 = goods_ids.split(',')
+    #GoodsInfo.object.filter(id__in=goods_ids1)
+    goods_list = []
+    for goods_id in goods_ids1:
+        goods_list.append(GoodsInfo.objects.get(id = int(goods_id)))
     user_email = UserInfo.objects.get(id=req.session['user_id']).uemail
     centext = {'title':'用户中心',
                'page_name': 1,
                'user_email':user_email,
-               'user_name':req.session['user_name']
+               'user_name':req.session['user_name'],
+               'goods_list':goods_list,
                }
     return render(req,'df_user/user_center_info.html',centext)
+@user_decorator.login
 def order(req):
     centext = {'title':"用户中心",
                'page_name': 1,
                }
     return render(req,'df_user/user_center_order.html',centext)
+@user_decorator.login
 def site(req):
     user = UserInfo.objects.get(id=req.session['user_id'])
     if req.method=="POST":

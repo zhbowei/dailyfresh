@@ -1,6 +1,6 @@
 {% extends 'df_goods/base.html' %}
 {% block head %}
-    <script>
+    <script type="text/javascript">
     $(function () {
         $('#add').click(function () {
             num = parseFloat($('.num_show').val());
@@ -9,21 +9,54 @@
         });
         $('#minus').click(function () {
             num = parseFloat($('.num_show').val());
-            if(num > 1){
-                $('.num_show').val(num-1);
-                $('.num_show').blur();
+            if(num <= 1) {
+            return;
             }
+            $('.num_show').val(num-1);
+            $('.num_show').blur();
         });
-    });
-    $(function () {
+        $(function () {
         $('.num_show').blur(function () {
-            num = parseFloat($('.num_show').val());
+            num = parseInt($('.num_show').val());
             price = parseFloat(($('#gprice').text()));
             total = num*price;
+            $('.num_show').val(num);
             $('#gtotal').text(total.toFixed(2)+'元')
         });
     });
+            var $add_x = $('#add_cart').offset().top;
+            var $add_y = $('#add_cart').offset().left;
+            var $to_x = $('#show_count').offset().top;
+            var $to_y = $('#show_count').offset().left;
+            $('#add_cart').click(function(){
+                $(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'});
+                if ($('.login_btn').text().indexOf('登录') >= 0){
+                    alert("请先登录后再购买");
+                    location.href = '/user/login/';
+                    return;
+                }
+                //动画
+                $(".add_jump").stop().animate({
+                    'left': $to_y+7,
+                    'top': $to_x+7},
+                    "fast", function() {
+                        $(".add_jump").fadeOut('fast',
+                            //function () {}
+                            );
+                    }
+                    );
+                //异步      ajax
+                s1();
+            });
+    });
+        function s1() {
+                num = parseInt($('.num_show').val());
+                $.get('/cart/add{{goods.id}}_' + num + '/', function (data) {
+                    $('#show_count').text(data.count);
+                });
+        }
     </script>
+
 {% endblock head %}
 
 
@@ -114,7 +147,8 @@
 					<dd>{{ goods.gcontext }} </dd>
 				</dl>
 			</div>
-
 		</div>
 	</div>
+    <div class="add_jump"></div>
+
 {% endblock body %}

@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^register_exit/$', views.register_exit),
     url(r'^login/$', views.login),
     url(r'^login_headle/$',views.login_headle),
+    url(r'^logout/$',views.logout),
     url(r'^info',views.info),
     url(r'^order',views.order),
     url(r'^site',views.site),
